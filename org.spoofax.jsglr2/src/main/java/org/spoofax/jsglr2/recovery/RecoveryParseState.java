@@ -8,19 +8,13 @@ import org.spoofax.jsglr2.parseforest.IParseNode;
 import org.spoofax.jsglr2.parser.ParseStateFactory;
 import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.stack.IStackNode;
-import org.spoofax.jsglr2.stack.collections.ActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IActiveStacks;
-import org.spoofax.jsglr2.stack.collections.IActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
-import org.spoofax.jsglr2.stack.collections.IForActorStacksFactory;
+import org.spoofax.jsglr2.stack.collections.*;
 
 public class RecoveryParseState<InputStack extends IInputStack, StackNode extends IStackNode>
     extends AbstractRecoveryParseState<InputStack, StackNode, BacktrackChoicePoint<InputStack, StackNode>> {
 
-    RecoveryParseState(JSGLR2Request request, InputStack inputStack, IActiveStacks<StackNode> activeStacks,
-        IForActorStacks<StackNode> forActorStacks) {
-        super(request, inputStack, activeStacks, forActorStacks);
+    RecoveryParseState(JSGLR2Request request, InputStack inputStack, IStacks<StackNode> stacks) {
+        super(request, inputStack, stacks);
     }
 
     public static
@@ -52,16 +46,15 @@ public class RecoveryParseState<InputStack extends IInputStack, StackNode extend
     ParseStateFactory<ParseForest_, Derivation_, ParseNode_, InputStack_, StackNode_, RecoveryParseState<InputStack_, StackNode_>>
         factory(IActiveStacksFactory activeStacksFactory, IForActorStacksFactory forActorStacksFactory) {
         return (request, inputStack, observing) -> {
-            IActiveStacks<StackNode_> activeStacks = activeStacksFactory.get(observing);
-            IForActorStacks<StackNode_> forActorStacks = forActorStacksFactory.get(observing);
+            IStacks<StackNode_> stacks = new StacksArrayList<>(observing);
 
-            return new RecoveryParseState<>(request, inputStack, activeStacks, forActorStacks);
+            return new RecoveryParseState<>(request, inputStack, stacks);
         };
     }
 
     @SuppressWarnings("unchecked") @Override public BacktrackChoicePoint<InputStack, StackNode>
         createBacktrackChoicePoint() {
         // This cast is ugly, but there's no way around it (see AbstractRecoveryParseState)
-        return new BacktrackChoicePoint<>((InputStack) inputStack.clone(), activeStacks);
+        return new BacktrackChoicePoint<>((InputStack) inputStack.clone(), stacks);
     }
 }

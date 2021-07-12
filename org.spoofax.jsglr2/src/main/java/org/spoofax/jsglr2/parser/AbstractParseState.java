@@ -13,6 +13,7 @@ import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.stack.IStackNode;
 import org.spoofax.jsglr2.stack.collections.IActiveStacks;
 import org.spoofax.jsglr2.stack.collections.IForActorStacks;
+import org.spoofax.jsglr2.stack.collections.IStacks;
 
 public abstract class AbstractParseState<InputStack extends IInputStack, StackNode extends IStackNode> {
 
@@ -22,24 +23,20 @@ public abstract class AbstractParseState<InputStack extends IInputStack, StackNo
     public InputStack inputStack;
     public ParsingMode mode;
 
-    public final IActiveStacks<StackNode> activeStacks;
-    public final IForActorStacks<StackNode> forActorStacks;
+    public final IStacks<StackNode> stacks;
     public final Queue<ForShifterElement<StackNode>> forShifter = new ArrayDeque<>();
 
     public StackNode acceptingStack;
 
-    protected AbstractParseState(JSGLR2Request request, InputStack inputStack, IActiveStacks<StackNode> activeStacks,
-        IForActorStacks<StackNode> forActorStacks) {
+    protected AbstractParseState(JSGLR2Request request, InputStack inputStack, IStacks<StackNode> stacks) {
         this.request = request;
         this.inputStack = inputStack;
         this.mode = ParsingMode.Standard;
-
-        this.activeStacks = activeStacks;
-        this.forActorStacks = forActorStacks;
+        this.stacks = stacks;
     }
 
     public void nextParseRound(ParserObserving observing) throws ParseException {
-        observing.notify(observer -> observer.parseRound(this, activeStacks));
+        observing.notify(observer -> observer.parseRound(this, stacks));
     }
 
     public Collection<Message> postProcessMessages(Collection<Message> messages, ITokens tokens) {

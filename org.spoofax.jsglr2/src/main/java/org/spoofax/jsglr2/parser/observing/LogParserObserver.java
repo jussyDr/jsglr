@@ -99,11 +99,11 @@ public class LogParserObserver
         log("    Reject link " + id(link), JSGLR2Logging.Parsing);
     }
 
-    @Override public void forActorStacks(IForActorStacks<StackNode> forActorStacks) {
+    @Override public void forActorStacks(Iterable<StackNode> forActorStacks) {
         log("For actor stacks: " + stackQueueToString(forActorStacks), JSGLR2Logging.Parsing);
     }
 
-    @Override public void handleForActorStack(StackNode stack, IForActorStacks<StackNode> forActorStacks) {
+    @Override public void handleForActorStack(StackNode stack, Iterable<StackNode> forActorStacks) {
         log("  Handle for stack " + stackNodeString(stack) + " (rejected: " + stack.allLinksRejected() + ")", JSGLR2Logging.Parsing);
     }
 

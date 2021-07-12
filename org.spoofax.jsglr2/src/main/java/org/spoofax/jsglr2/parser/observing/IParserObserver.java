@@ -18,7 +18,6 @@ import org.spoofax.jsglr2.parser.result.ParseSuccess;
 import org.spoofax.jsglr2.recovery.IBacktrackChoicePoint;
 import org.spoofax.jsglr2.stack.IStackNode;
 import org.spoofax.jsglr2.stack.StackLink;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
 
 public interface IParserObserver
 //@formatter:off
@@ -57,10 +56,10 @@ public interface IParserObserver
     default void rejectStackLink(StackLink<ParseForest, StackNode> link) {
     }
 
-    default void forActorStacks(IForActorStacks<StackNode> forActorStacks) {
+    default void forActorStacks(Iterable<StackNode> forActorStacks) {
     }
 
-    default void handleForActorStack(StackNode stack, IForActorStacks<StackNode> forActorStacks) {
+    default void handleForActorStack(StackNode stack, Iterable<StackNode> forActorStacks) {
     }
 
     default void actor(StackNode stack, ParseState parseState, Iterable<IAction> applicableActions) {

@@ -11,21 +11,15 @@ import org.spoofax.jsglr2.parser.ParseStateFactory;
 import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.stack.IStackNode;
-import org.spoofax.jsglr2.stack.collections.ActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IActiveStacks;
-import org.spoofax.jsglr2.stack.collections.IActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
-import org.spoofax.jsglr2.stack.collections.IForActorStacksFactory;
+import org.spoofax.jsglr2.stack.collections.*;
 
 public class IncrementalParseState<StackNode extends IStackNode>
     extends AbstractParseState<IIncrementalInputStack, StackNode> implements IIncrementalParseState {
 
     private boolean multipleStates = false;
 
-    public IncrementalParseState(JSGLR2Request request, IIncrementalInputStack inputStack,
-        IActiveStacks<StackNode> activeStacks, IForActorStacks<StackNode> forActorStacks) {
-        super(request, inputStack, activeStacks, forActorStacks);
+    public IncrementalParseState(JSGLR2Request request, IIncrementalInputStack inputStack, IStacks<StackNode> stacks) {
+        super(request, inputStack, stacks);
     }
 
     public static <StackNode_ extends IStackNode>
@@ -43,17 +37,16 @@ public class IncrementalParseState<StackNode extends IStackNode>
         ParseStateFactory<IncrementalParseForest, IncrementalDerivation, IncrementalParseNode, IIncrementalInputStack, StackNode_, IncrementalParseState<StackNode_>>
         factory(IActiveStacksFactory activeStacksFactory, IForActorStacksFactory forActorStacksFactory) {
         return (request, inputStack, observing) -> {
-            IActiveStacks<StackNode_> activeStacks = activeStacksFactory.get(observing);
-            IForActorStacks<StackNode_> forActorStacks = forActorStacksFactory.get(observing);
+            IStacks<StackNode_> stacks = new StacksArrayList<>(observing);
 
-            return new IncrementalParseState<>(request, inputStack, activeStacks, forActorStacks);
+            return new IncrementalParseState<>(request, inputStack, stacks);
         };
     }
 
     @Override public void nextParseRound(ParserObserving observing) throws ParseException {
         super.nextParseRound(observing);
 
-        setMultipleStates(activeStacks.isMultiple());
+        setMultipleStates(stacks.isMultiple());
     }
 
     @Override public boolean newParseNodesAreReusable() {

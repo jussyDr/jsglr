@@ -367,7 +367,7 @@ public class IncrementalSGLRThesisExampleTest extends BaseTestWithSdf3ParseTable
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     static class ShiftReduceBreakdownObserver implements IParserObserver {
-        @Override public void forActorStacks(IForActorStacks forActorStacks) {
+        @Override public void forActorStacks(Iterable forActorStacks) {
             System.out.println("Starting parse round with stacks\n[" + Iterables2.stream(forActorStacks)
                 .map(e -> stateToString(((IStackNode) e).state())).collect(Collectors.joining(", ")) + "]");
         }

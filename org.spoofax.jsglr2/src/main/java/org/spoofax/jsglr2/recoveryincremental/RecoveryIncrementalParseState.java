@@ -13,12 +13,7 @@ import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.recovery.AbstractRecoveryParseState;
 import org.spoofax.jsglr2.recovery.BacktrackChoicePoint;
 import org.spoofax.jsglr2.stack.IStackNode;
-import org.spoofax.jsglr2.stack.collections.ActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IActiveStacks;
-import org.spoofax.jsglr2.stack.collections.IActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
-import org.spoofax.jsglr2.stack.collections.IForActorStacksFactory;
+import org.spoofax.jsglr2.stack.collections.*;
 
 public class RecoveryIncrementalParseState<InputStack extends IIncrementalInputStack, StackNode extends IStackNode>
     extends AbstractRecoveryParseState<InputStack, StackNode, BacktrackChoicePoint<InputStack, StackNode>>
@@ -26,9 +21,8 @@ public class RecoveryIncrementalParseState<InputStack extends IIncrementalInputS
 
     private boolean multipleStates = false;
 
-    RecoveryIncrementalParseState(JSGLR2Request request, InputStack inputStack, IActiveStacks<StackNode> activeStacks,
-        IForActorStacks<StackNode> forActorStacks) {
-        super(request, inputStack, activeStacks, forActorStacks);
+    RecoveryIncrementalParseState(JSGLR2Request request, InputStack inputStack, IStacks<StackNode> stacks) {
+        super(request, inputStack, stacks);
     }
 
     public static
@@ -60,17 +54,16 @@ public class RecoveryIncrementalParseState<InputStack extends IIncrementalInputS
     ParseStateFactory<ParseForest_, Derivation_, ParseNode_, InputStack_, StackNode_, RecoveryIncrementalParseState<InputStack_, StackNode_>>
         factory(IActiveStacksFactory activeStacksFactory, IForActorStacksFactory forActorStacksFactory) {
         return (request, inputStack, observing) -> {
-            IActiveStacks<StackNode_> activeStacks = activeStacksFactory.get(observing);
-            IForActorStacks<StackNode_> forActorStacks = forActorStacksFactory.get(observing);
+            IStacks<StackNode_> stacks = new StacksArrayList<>(observing);
 
-            return new RecoveryIncrementalParseState<>(request, inputStack, activeStacks, forActorStacks);
+            return new RecoveryIncrementalParseState<>(request, inputStack, stacks);
         };
     }
 
     @Override public void nextParseRound(ParserObserving observing) throws ParseException {
         super.nextParseRound(observing);
 
-        setMultipleStates(activeStacks.isMultiple());
+        setMultipleStates(stacks.isMultiple());
     }
 
     @Override public boolean newParseNodesAreReusable() {
@@ -84,6 +77,6 @@ public class RecoveryIncrementalParseState<InputStack extends IIncrementalInputS
     @SuppressWarnings("unchecked") @Override public BacktrackChoicePoint<InputStack, StackNode>
         createBacktrackChoicePoint() {
         // This cast is ugly, but there's no way around it (see AbstractRecoveryParseState)
-        return new BacktrackChoicePoint<>((InputStack) inputStack.clone(), activeStacks);
+        return new BacktrackChoicePoint<>((InputStack) inputStack.clone(), stacks);
     }
 }

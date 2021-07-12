@@ -21,6 +21,7 @@ import org.spoofax.jsglr2.parser.result.ParseFailureCause;
 import org.spoofax.jsglr2.stack.IStackNode;
 import org.spoofax.jsglr2.stack.collections.IActiveStacks;
 import org.spoofax.jsglr2.stack.collections.IForActorStacks;
+import org.spoofax.jsglr2.stack.collections.IStacks;
 
 public abstract class AbstractRecoveryParseState
 //@formatter:off
@@ -35,9 +36,8 @@ public abstract class AbstractRecoveryParseState
     private RecoveryJob<StackNode> recoveryJob = null;
     private boolean appliedRecovery = false;
 
-    public AbstractRecoveryParseState(JSGLR2Request request, InputStack inputStack,
-        IActiveStacks<StackNode> activeStacks, IForActorStacks<StackNode> forActorStacks) {
-        super(request, inputStack, activeStacks, forActorStacks);
+    public AbstractRecoveryParseState(JSGLR2Request request, InputStack inputStack, IStacks<StackNode> stacks) {
+        super(request, inputStack, stacks);
     }
 
     @Override public void nextParseRound(ParserObserving observing) throws ParseException {
@@ -93,7 +93,7 @@ public abstract class AbstractRecoveryParseState
 
             resetToBacktrackChoicePoint(backtrackChoicePoints.peek());
 
-            recoveryJob.initQuota(activeStacks);
+            recoveryJob.initQuota(stacks);
 
             return true;
         } else
@@ -108,10 +108,10 @@ public abstract class AbstractRecoveryParseState
         // As programmers, we assume that the backtrack choice points contain an input stack of the same type each time.
         this.inputStack = (InputStack) backtrackChoicePoint.inputStack().clone();
 
-        this.activeStacks.clear();
+        this.stacks.clear();
 
         for(StackNode activeStack : backtrackChoicePoint.activeStacks())
-            this.activeStacks.add(activeStack);
+            this.stacks.add(activeStack);
     }
 
     @Override public boolean appliedRecovery() {

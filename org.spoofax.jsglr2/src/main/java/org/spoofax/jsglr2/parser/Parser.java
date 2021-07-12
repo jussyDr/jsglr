@@ -1,6 +1,7 @@
 package org.spoofax.jsglr2.parser;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import org.metaborg.parsetable.IParseTable;
@@ -76,7 +77,7 @@ public class Parser
 
         StackNode initialStackNode = stackManager.createInitialStackNode(parseTable.getStartState());
 
-        parseState.activeStacks.add(initialStackNode);
+        parseState.stacks.add(initialStackNode);
 
         boolean recover;
 
@@ -156,11 +157,11 @@ public class Parser
     }
 
     protected void parseLoop(ParseState parseState) throws ParseException {
-        while(parseState.inputStack.hasNext() && !parseState.activeStacks.isEmpty()) {
+        while(parseState.inputStack.hasNext() && !parseState.stacks.isEmpty()) {
             parseCharacter(parseState);
             parseState.inputStack.consumed();
 
-            if(!parseState.activeStacks.isEmpty())
+            if(!parseState.stacks.isEmpty())
                 parseState.inputStack.next();
         }
     }
@@ -168,9 +169,9 @@ public class Parser
     protected void parseCharacter(ParseState parseState) throws ParseException {
         parseState.nextParseRound(observing);
 
-        parseState.activeStacks.addAllTo(parseState.forActorStacks);
+        parseState.stacks.addAllForActor();
 
-        observing.notify(observer -> observer.forActorStacks(parseState.forActorStacks));
+        observing.notify(observer -> observer.forActorStacks(parseState.stacks.forActorStacks()));
 
         processForActorStacks(parseState);
 
@@ -178,10 +179,12 @@ public class Parser
     }
 
     protected void processForActorStacks(ParseState parseState) {
-        while(parseState.forActorStacks.nonEmpty()) {
-            StackNode stack = parseState.forActorStacks.remove();
+        Iterator<StackNode> forActor = parseState.stacks.forActor();
 
-            observing.notify(observer -> observer.handleForActorStack(stack, parseState.forActorStacks));
+        while(forActor.hasNext()) {
+            StackNode stack = forActor.next();
+
+            observing.notify(observer -> observer.handleForActorStack(stack, parseState.stacks.forActorStacks()));
 
             if(!stack.allLinksRejected())
                 actor(stack, parseState);
@@ -224,14 +227,14 @@ public class Parser
     }
 
     protected void shifter(ParseState parseState) {
-        parseState.activeStacks.clear();
+        parseState.stacks.clear();
 
         ParseForest characterNode = getNodeToShift(parseState);
 
         observing.notify(observer -> observer.shifter(characterNode, parseState.forShifter));
 
         for(ForShifterElement<StackNode> forShifterElement : parseState.forShifter) {
-            StackNode gotoStack = parseState.activeStacks.findWithState(forShifterElement.state);
+            StackNode gotoStack = parseState.stacks.findWithState(forShifterElement.state);
 
             if(gotoStack != null) {
                 stackManager.createStackLink(parseState, gotoStack, forShifterElement.stack, characterNode);
@@ -240,7 +243,7 @@ public class Parser
 
                 stackManager.createStackLink(parseState, gotoStack, forShifterElement.stack, characterNode);
 
-                parseState.activeStacks.add(gotoStack);
+                parseState.stacks.add(gotoStack);
             }
 
             StackNode finalGotoStack = gotoStack;

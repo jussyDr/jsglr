@@ -44,7 +44,7 @@ public class BasicElkhoundStackManager
     @Override protected StackLink<ParseForest, BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>> addStackLink(
         ParseState parseState, BasicElkhoundStackNode<ParseForest, Derivation, ParseNode> from,
         BasicElkhoundStackNode<ParseForest, Derivation, ParseNode> to, ParseForest parseNode) {
-        return from.addLink(observing, to, parseNode, parseState.activeStacks);
+        return from.addLink(observing, to, parseNode, parseState.stacks);
     }
 
     @Override protected StackLink<ParseForest, BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>>

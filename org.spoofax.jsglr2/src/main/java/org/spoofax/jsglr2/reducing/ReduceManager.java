@@ -128,7 +128,7 @@ public class ReduceManager
         int gotoId = originStack.state().getGotoId(reduce.production().id());
         IState gotoState = parseTable.getState(gotoId);
 
-        StackNode gotoStack = parseState.activeStacks.findWithState(gotoState);
+        StackNode gotoStack = parseState.stacks.findWithState(gotoState);
 
         if(gotoStack != null) {
             StackLink<ParseForest, StackNode> directLink = stackManager.findDirectLink(gotoStack, originStack);
@@ -141,8 +141,7 @@ public class ReduceManager
                 StackLink<ParseForest, StackNode> link = reducer.reducerExistingStackWithoutDirectLink(observing,
                     parseState, reduce, gotoStack, originStack, parseForests);
 
-                for(StackNode activeStackForLimitedReductions : parseState.activeStacks
-                    .forLimitedReductions(parseState.forActorStacks)) {
+                for(StackNode activeStackForLimitedReductions : parseState.stacks.forLimitedReductions()) {
                     for(IReduce reduceAction : activeStackForLimitedReductions.state()
                         .getApplicableReduceActions(parseState.inputStack, parseState.mode))
                         doLimitedReductions(observing, parseState, activeStackForLimitedReductions, reduceAction, link);
@@ -152,8 +151,7 @@ public class ReduceManager
             gotoStack =
                 reducer.reducerNoExistingStack(observing, parseState, reduce, originStack, gotoState, parseForests);
 
-            parseState.activeStacks.add(gotoStack);
-            parseState.forActorStacks.add(gotoStack);
+            parseState.stacks.addForActor(gotoStack);
         }
 
         StackNode finalGotoStack = gotoStack;

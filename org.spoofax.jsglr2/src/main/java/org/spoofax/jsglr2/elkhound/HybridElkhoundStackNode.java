@@ -47,7 +47,7 @@ public class HybridElkhoundStackNode
     public StackLink<ParseForest, HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>> addLink(
         ParserObserving<ParseForest, Derivation, ParseNode, HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>, ?> observing,
         HybridElkhoundStackNode<ParseForest, Derivation, ParseNode> parent, ParseForest parseNode,
-        IActiveStacks<HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>> activeStacks) {
+        Iterable<HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>> activeStacks) {
         StackLink<ParseForest, HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>> link =
             new StackLink<>(this, parent, parseNode);
 

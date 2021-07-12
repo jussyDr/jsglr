@@ -42,7 +42,7 @@ public class BasicElkhoundStackNode
     public StackLink<ParseForest, BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>> addLink(
         ParserObserving<ParseForest, Derivation, ParseNode, BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>, ?> observing,
         BasicElkhoundStackNode<ParseForest, Derivation, ParseNode> parent, ParseForest parseNode,
-        IActiveStacks<BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>> activeStacks) {
+        Iterable<BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>> activeStacks) {
         StackLink<ParseForest, BasicElkhoundStackNode<ParseForest, Derivation, ParseNode>> link =
             new StackLink<>(this, parent, parseNode);
 

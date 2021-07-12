@@ -6,19 +6,13 @@ import org.spoofax.jsglr2.parseforest.IDerivation;
 import org.spoofax.jsglr2.parseforest.IParseForest;
 import org.spoofax.jsglr2.parseforest.IParseNode;
 import org.spoofax.jsglr2.stack.IStackNode;
-import org.spoofax.jsglr2.stack.collections.ActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IActiveStacks;
-import org.spoofax.jsglr2.stack.collections.IActiveStacksFactory;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
-import org.spoofax.jsglr2.stack.collections.IForActorStacksFactory;
+import org.spoofax.jsglr2.stack.collections.*;
 
 public class ParseState<InputStack extends IInputStack, StackNode extends IStackNode>
     extends AbstractParseState<InputStack, StackNode> {
 
-    protected ParseState(JSGLR2Request request, InputStack inputStack, IActiveStacks<StackNode> activeStacks,
-        IForActorStacks<StackNode> forActorStacks) {
-        super(request, inputStack, activeStacks, forActorStacks);
+    protected ParseState(JSGLR2Request request, InputStack inputStack, IStacks<StackNode> stacks) {
+        super(request, inputStack, stacks);
     }
 
     public static
@@ -50,10 +44,9 @@ public class ParseState<InputStack extends IInputStack, StackNode extends IStack
     ParseStateFactory<ParseForest_, Derivation_, ParseNode_, InputStack_, StackNode_, ParseState<InputStack_, StackNode_>>
         factory(IActiveStacksFactory activeStacksFactory, IForActorStacksFactory forActorStacksFactory) {
         return (request, inputStack, observing) -> {
-            IActiveStacks<StackNode_> activeStacks = activeStacksFactory.get(observing);
-            IForActorStacks<StackNode_> forActorStacks = forActorStacksFactory.get(observing);
+            IStacks<StackNode_> stacks = new StacksArrayList<>(observing);
 
-            return new ParseState<>(request, inputStack, activeStacks, forActorStacks);
+            return new ParseState<>(request, inputStack, stacks);
         };
     }
 

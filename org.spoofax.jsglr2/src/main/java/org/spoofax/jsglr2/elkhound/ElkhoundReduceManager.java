@@ -69,7 +69,7 @@ public class ElkhoundReduceManager
                 ParseForest[] parseNodes = deterministicPath.parseForests;
 
                 if(!ignoreReducePath(originStack, reduce, parseNodes)) {
-                    if(parseState.activeStacks.isEmpty())
+                    if(parseState.stacks.isEmpty())
                         // Do LR if there are no other active stacks (the stack on which the current reduction is
                         // applied is removed from the activeStacks collection in ElkhoundParser)
                         reducerElkhound(observing, parseState, activeStack, originStack, reduce, parseNodes);
@@ -106,7 +106,7 @@ public class ElkhoundReduceManager
         ElkhoundStackNode gotoStack =
             reducer.reducerNoExistingStack(observing, parseState, reduce, originStack, gotoState, parseForests);
 
-        parseState.activeStacks.add(gotoStack);
+        parseState.stacks.add(gotoStack);
         // We are doing LR and the new active stack is the only one, thus no need to add it to forActorStacks here for
         // further processing
 
