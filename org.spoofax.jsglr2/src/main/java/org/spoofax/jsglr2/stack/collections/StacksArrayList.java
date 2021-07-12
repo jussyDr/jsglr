@@ -69,9 +69,9 @@ public class StacksArrayList
     }
 
     @Override public void addForActor(StackNode stack) {
-        add(stack);
-
         observing.notify(observer -> observer.addForActorStack(stack));
+
+        add(stack);
 
         Collections.swap(stacks, forActorSize, stacks.size() - 1);
 
@@ -116,17 +116,18 @@ public class StacksArrayList
     @Override public Iterable<StackNode> forLimitedReductions() {
         return () -> new Iterator<StackNode>() {
 
-            private int cursor = stacks.size() - 1;
+            private final int size = stacks.size();
+            private int cursor = forActorSize;
 
             @Override public boolean hasNext() {
-                while(cursor >= forActorSize && stacks.get(cursor).allLinksRejected())
-                    cursor--;
+                while(cursor < size && stacks.get(cursor).allLinksRejected())
+                    cursor++;
 
-                return cursor >= forActorSize;
+                return cursor < size;
             }
 
             @Override public StackNode next() {
-                return stacks.get(cursor--);
+                return stacks.get(cursor++);
             }
 
         };
