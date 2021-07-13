@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DynamicTest;
 import org.junit.jupiter.api.TestFactory;
 import org.metaborg.parsetable.ParseTableVariant;
@@ -134,7 +135,7 @@ public class IncrementalSGLRThesisExampleTest extends BaseTestWithSdf3ParseTable
             new String[] { "[Return(Var(\"ab\"))]", "[Return(Var(\"ans\"))]", });
     }
 
-    @TestFactory public Stream<DynamicTest> testReturnReuse() {
+    @Disabled @TestFactory public Stream<DynamicTest> testReturnReuse() {
         return testParseNodeReuse(return1, return2, //
             new ParseNodeDescriptor(0, 0, "LAYOUT", null), //
             new ParseNodeDescriptor(6, 1, "LAYOUT", null));

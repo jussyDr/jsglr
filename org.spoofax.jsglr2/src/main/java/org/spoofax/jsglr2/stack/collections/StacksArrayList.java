@@ -76,8 +76,6 @@ public class StacksArrayList
         Collections.swap(stacks, forActorSize, stacks.size() - 1);
 
         if(stack.state().isRejectable()) {
-            // TODO: implement priority (see P9707 Section 8.4)
-
             Collections.swap(stacks, forActorDelayedSize, forActorSize);
 
             forActorDelayedSize++;
@@ -116,18 +114,17 @@ public class StacksArrayList
     @Override public Iterable<StackNode> forLimitedReductions() {
         return () -> new Iterator<StackNode>() {
 
-            private final int size = stacks.size();
-            private int cursor = forActorSize;
+            private int cursor = stacks.size() - 1;
 
             @Override public boolean hasNext() {
-                while(cursor < size && stacks.get(cursor).allLinksRejected())
-                    cursor++;
+                while(cursor >= forActorSize && stacks.get(cursor).allLinksRejected())
+                    cursor--;
 
-                return cursor < size;
+                return cursor >= forActorSize;
             }
 
             @Override public StackNode next() {
-                return stacks.get(cursor++);
+                return stacks.get(cursor--);
             }
 
         };

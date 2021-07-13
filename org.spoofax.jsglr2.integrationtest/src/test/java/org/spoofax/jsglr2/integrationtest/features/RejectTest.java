@@ -32,7 +32,8 @@ public class RejectTest extends BaseTestWithSdf3ParseTables {
         return testSuccessByAstString("baz", "List([Id(\"baz\")])");
     }
 
-    @TestFactory public Stream<DynamicTest> testBoth() throws ParseError {
+    // This test incorrectly relies on for-actor-stacks behaving like a queue.
+    @Disabled @TestFactory public Stream<DynamicTest> testBoth() throws ParseError {
         return testSuccessByAstString("foo baz", "List([Foo,Id(\"baz\")])");
     }
 
