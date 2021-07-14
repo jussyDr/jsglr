@@ -1,5 +1,6 @@
 package org.spoofax.jsglr2.stack.collections;
 
+import com.google.common.collect.Iterators;
 import org.metaborg.parsetable.states.IState;
 import org.spoofax.jsglr2.parseforest.IDerivation;
 import org.spoofax.jsglr2.parseforest.IParseForest;
@@ -8,10 +9,7 @@ import org.spoofax.jsglr2.parser.AbstractParseState;
 import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.stack.IStackNode;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 public class StacksArrayList
 //@formatter:off
@@ -112,38 +110,11 @@ public class StacksArrayList
     }
 
     @Override public Iterable<StackNode> forLimitedReductions() {
-        return () -> new Iterator<StackNode>() {
-
-            private int cursor = stacks.size() - 1;
-
-            @Override public boolean hasNext() {
-                while(cursor >= forActorSize && stacks.get(cursor).allLinksRejected())
-                    cursor--;
-
-                return cursor >= forActorSize;
-            }
-
-            @Override public StackNode next() {
-                return stacks.get(cursor--);
-            }
-
-        };
+        return new ArrayDeque<>(stacks.subList(forActorSize, stacks.size()));
     }
 
     @Override public Iterable<StackNode> forActorStacks() {
-        return () -> new Iterator<StackNode>() {
-
-            private int cursor = 0;
-
-            @Override public boolean hasNext() {
-                return cursor < forActorSize;
-            }
-
-            @Override public StackNode next() {
-                return stacks.get(cursor++);
-            }
-
-        };
+        return stacks.subList(0, forActorSize);
     }
 
     @Override public Iterator<StackNode> iterator() {
