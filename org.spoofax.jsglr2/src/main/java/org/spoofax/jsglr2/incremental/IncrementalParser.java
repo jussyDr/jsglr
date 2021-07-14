@@ -72,7 +72,7 @@ public class IncrementalParser
 
         // ...the parse is not at the start anymore (parseLoop may be called multiple times due to recovery)
         if(parseState.inputStack.offset() != 0
-            || parseState.stacks.getSingle().state().id() != parseTable.getStartState().id())
+            || parseState.activeStacks.getSingle().state().id() != parseTable.getStartState().id())
             return false;
 
         IncrementalParseForest node = parseState.inputStack.getNode();
@@ -91,7 +91,7 @@ public class IncrementalParser
         if(!rootNode.production().lhs().descriptor().equals("<START>"))
             return false;
 
-        StackNode stack = parseState.stacks.getSingle();
+        StackNode stack = parseState.activeStacks.getSingle();
 
         // Shift the entire tree
         addForShifter(parseState, stack, parseTable.getState(stack.state().getGotoId(rootNode.production().id())));
@@ -99,7 +99,7 @@ public class IncrementalParser
         parseState.inputStack.next();
 
         // Accept
-        actor(parseState.stacks.getSingle(), parseState, Accept.SINGLETON);
+        actor(parseState.activeStacks.getSingle(), parseState, Accept.SINGLETON);
         return true;
     }
 
@@ -179,7 +179,7 @@ public class IncrementalParser
                     ? lookaheadNode.isReusable(stack.state()) ? NO_ACTIONS : WRONG_STATE : IRREUSABLE));
 
             parseState.inputStack.breakDown();
-            observing.notify(observer -> observer.parseRound(parseState, parseState.stacks));
+            observing.notify(observer -> observer.parseRound(parseState, parseState.activeStacks));
 
             // If the broken-down node has no children, it has been removed from the input stack.
             // Therefore, any GotoShift actions that were in the forShifter list become invalid.

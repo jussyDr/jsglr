@@ -20,7 +20,6 @@ import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.basic.BasicStackNode;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
 import org.spoofax.jsglr2.testset.TestSetWithParseTableReader;
 import org.spoofax.jsglr2.testset.testinput.StringInput;
 import org.spoofax.terms.ParseError;
@@ -36,9 +35,8 @@ public abstract class JSGLR2DataStructureBenchmark extends BaseBenchmark<String,
 
         parser =
             (IObservableParser<IBasicParseForest, IBasicDerivation<IBasicParseForest>, IBasicParseNode<IBasicParseForest, IBasicDerivation<IBasicParseForest>>, BasicStackNode<IBasicParseForest>, AbstractParseState<IInputStack, BasicStackNode<IBasicParseForest>>>) new ParserVariant(
-                ActiveStacksRepresentation.ArrayList, ForActorStacksRepresentation.ArrayDeque,
-                ParseForestRepresentation.Basic, ParseForestConstruction.Full, StackRepresentation.Basic,
-                Reducing.Basic, false).getParser(parseTable);
+                ActiveStacksRepresentation.ArrayList, ParseForestRepresentation.Basic, ParseForestConstruction.Full,
+                StackRepresentation.Basic, Reducing.Basic, false).getParser(parseTable);
 
         postParserSetup();
 

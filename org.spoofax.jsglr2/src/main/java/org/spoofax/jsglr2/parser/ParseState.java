@@ -11,8 +11,8 @@ import org.spoofax.jsglr2.stack.collections.*;
 public class ParseState<InputStack extends IInputStack, StackNode extends IStackNode>
     extends AbstractParseState<InputStack, StackNode> {
 
-    protected ParseState(JSGLR2Request request, InputStack inputStack, IStacks<StackNode> stacks) {
-        super(request, inputStack, stacks);
+    protected ParseState(JSGLR2Request request, InputStack inputStack, IActiveStacks<StackNode> activeStacks) {
+        super(request, inputStack, activeStacks);
     }
 
     public static
@@ -25,12 +25,7 @@ public class ParseState<InputStack extends IInputStack, StackNode extends IStack
 //@formatter:on
     ParseStateFactory<ParseForest_, Derivation_, ParseNode_, InputStack_, StackNode_, ParseState<InputStack_, StackNode_>>
         factory(ParserVariant variant) {
-        //@formatter:off
-        return factory(
-            new ActiveStacksFactory(variant.activeStacksRepresentation),
-            new ForActorStacksFactory(variant.forActorStacksRepresentation)
-        );
-        //@formatter:on
+        return factory(new ActiveStacksFactory(variant.activeStacksRepresentation));
     }
 
     public static
@@ -42,11 +37,11 @@ public class ParseState<InputStack extends IInputStack, StackNode extends IStack
     InputStack_  extends IInputStack>
 //@formatter:on
     ParseStateFactory<ParseForest_, Derivation_, ParseNode_, InputStack_, StackNode_, ParseState<InputStack_, StackNode_>>
-        factory(IActiveStacksFactory activeStacksFactory, IForActorStacksFactory forActorStacksFactory) {
+        factory(IActiveStacksFactory activeStacksFactory) {
         return (request, inputStack, observing) -> {
-            IStacks<StackNode_> stacks = new StacksArrayList<>(observing);
+            IActiveStacks<StackNode_> activeStacks = activeStacksFactory.get(observing);
 
-            return new ParseState<>(request, inputStack, stacks);
+            return new ParseState<>(request, inputStack, activeStacks);
         };
     }
 

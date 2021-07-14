@@ -1,7 +1,5 @@
 package org.spoofax.jsglr2.measure.parsing;
 
-import java.util.Iterator;
-
 import org.metaborg.parsetable.states.IState;
 import org.spoofax.jsglr2.parseforest.IDerivation;
 import org.spoofax.jsglr2.parseforest.IParseForest;
@@ -10,7 +8,8 @@ import org.spoofax.jsglr2.parser.AbstractParseState;
 import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.stack.IStackNode;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksArrayList;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
+
+import java.util.Iterator;
 
 public class MeasureActiveStacks
 //@formatter:off
@@ -22,11 +21,30 @@ public class MeasureActiveStacks
 //@formatter:on
     extends ActiveStacksArrayList<ParseForest, Derivation, ParseNode, StackNode, ParseState> {
 
-    long adds = 0, maxSize = 0, iSingleChecks = 0, isEmptyChecks = 0, findsWithState = 0, forLimitedReductions = 0,
-        addAllTo = 0, clears = 0, iterators = 0;
+    long isEmptyChecks = 0, isSingleChecks = 0, findsWithState = 0, adds = 0, forActorAdds = 0, forActorDelayedAdds = 0,
+        addAllToForActors = 0, maxSize = 0, forActorMaxSize = 0, forActorDelayedMaxSize = 0, clears = 0,
+        forActorHasNextChecks = 0, forLimitedReductions = 0, iterators = 0;
 
     public MeasureActiveStacks(ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing) {
         super(observing);
+    }
+
+    @Override public boolean isEmpty() {
+        isEmptyChecks++;
+
+        return super.isEmpty();
+    }
+
+    @Override public boolean isSingle() {
+        isSingleChecks++;
+
+        return super.isSingle();
+    }
+
+    @Override public StackNode findWithState(IState state) {
+        findsWithState++;
+
+        return super.findWithState(state);
     }
 
     @Override public void add(StackNode stack) {
@@ -37,40 +55,55 @@ public class MeasureActiveStacks
         maxSize = Math.max(maxSize, activeStacks.size());
     }
 
-    @Override public boolean isSingle() {
-        iSingleChecks++;
+    @Override public void addForActor(StackNode stack) {
+        if(stack.state().isRejectable())
+            forActorDelayedAdds++;
+        else
+            forActorAdds++;
 
-        return super.isSingle();
+        super.addForActor(stack);
+
+        maxSize = Math.max(maxSize, activeStacks.size());
+        forActorMaxSize = Math.max(forActorMaxSize, forActorSize);
+        forActorDelayedMaxSize = Math.max(forActorDelayedMaxSize, forActorDelayedSize);
     }
 
-    @Override public boolean isEmpty() {
-        isEmptyChecks++;
+    @Override public void addAllForActor() {
+        addAllToForActors++;
 
-        return super.isEmpty();
-    }
+        super.addAllForActor();
 
-    @Override public StackNode findWithState(IState state) {
-        findsWithState++;
-
-        return super.findWithState(state);
-    }
-
-    @Override public Iterable<StackNode> forLimitedReductions(IForActorStacks<StackNode> forActorStacks) {
-        forLimitedReductions++;
-
-        return super.forLimitedReductions(forActorStacks);
-    }
-
-    @Override public void addAllTo(IForActorStacks<StackNode> other) {
-        addAllTo++;
-
-        super.addAllTo(other);
+        forActorMaxSize = Math.max(forActorMaxSize, forActorSize);
     }
 
     @Override public void clear() {
         clears++;
 
         super.clear();
+    }
+
+    @Override public Iterator<StackNode> forActor() {
+        Iterator<StackNode> forActor = super.forActor();
+
+        return new Iterator<StackNode>() {
+
+            @Override public boolean hasNext() {
+                forActorHasNextChecks++;
+
+                return forActor.hasNext();
+            }
+
+            @Override public StackNode next() {
+                return forActor.next();
+            }
+
+        };
+    }
+
+    @Override public Iterable<StackNode> forLimitedReductions() {
+        forLimitedReductions++;
+
+        return super.forLimitedReductions();
     }
 
     @Override public Iterator<StackNode> iterator() {

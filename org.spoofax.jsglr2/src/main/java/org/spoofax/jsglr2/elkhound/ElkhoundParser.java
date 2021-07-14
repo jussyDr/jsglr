@@ -46,12 +46,12 @@ public class ElkhoundParser
     @Override protected void parseLoop(ParseState parseState) throws ParseException {
         boolean nextRound = true;
 
-        while(parseState.inputStack.hasNext() && !parseState.stacks.isEmpty()) {
-            if(parseState.stacks.isSingle()) {
+        while(parseState.inputStack.hasNext() && !parseState.activeStacks.isEmpty()) {
+            if(parseState.activeStacks.isSingle()) {
                 if(nextRound)
                     parseState.nextParseRound(observing);
 
-                ElkhoundStackNode singleActiveStack = parseState.stacks.getSingle();
+                ElkhoundStackNode singleActiveStack = parseState.activeStacks.getSingle();
 
                 if(!singleActiveStack.allLinksRejected()) {
                     Iterator<IAction> actionsIterator =
@@ -61,7 +61,7 @@ public class ElkhoundParser
                         IAction firstAction = actionsIterator.next();
 
                         if(!actionsIterator.hasNext()) {
-                            parseState.stacks.clear();
+                            parseState.activeStacks.clear();
 
                             switch(firstAction.actionType()) {
                                 case SHIFT:
@@ -76,7 +76,7 @@ public class ElkhoundParser
                                     stackManager.createStackLink(parseState, newStack, singleActiveStack,
                                         characterNode);
 
-                                    parseState.stacks.add(newStack);
+                                    parseState.activeStacks.add(newStack);
 
                                     observing
                                         .notify(observer -> observer.shift(parseState, singleActiveStack, newStack));
@@ -96,8 +96,8 @@ public class ElkhoundParser
                                     // depth not big enough, so there is reduced over multiple paths), we thus partly
                                     // fall back to (S)GLR by processing the forActorStacks collection and calling
                                     // shifter afterwards, before going to the next character
-                                    if(parseState.stacks.forActor().hasNext()) {
-                                        parseState.stacks.add(singleActiveStack);
+                                    if(parseState.activeStacks.forActor().hasNext()) {
+                                        parseState.activeStacks.add(singleActiveStack);
 
                                         processForActorStacks(parseState);
                                         shifter(parseState);
@@ -132,14 +132,14 @@ public class ElkhoundParser
                         }
                     } else {
                         // The single active stack that was left has no applicable actions, thus parsing fails
-                        parseState.stacks.clear();
+                        parseState.activeStacks.clear();
                         return;
                     }
                 } else {
                     observing.notify(observer -> observer.skipRejectedStack(singleActiveStack));
 
                     // The single active stack that was left is rejected, thus parsing fails
-                    parseState.stacks.clear();
+                    parseState.activeStacks.clear();
                     return;
                 }
             } else {

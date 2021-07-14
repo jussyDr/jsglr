@@ -26,7 +26,6 @@ import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
 import org.spoofax.jsglr2.tokens.StubTokenizer;
 import org.spoofax.jsglr2.tokens.TokenizerVariant;
 import org.spoofax.jsglr2.tokens.incremental.IncrementalTreeShapedTokenizer;
@@ -123,7 +122,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.standard(),
                     ParseForestConstruction.standard(),
                     StackRepresentation.Hybrid,
@@ -136,7 +134,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.standard(),
                     ParseForestConstruction.standard(),
                     StackRepresentation.standard(),
@@ -149,7 +146,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.standard(),
                     ParseForestConstruction.standard(),
                     StackRepresentation.Hybrid,
@@ -162,7 +158,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.standard(),
                     ParseForestConstruction.standard(),
                     StackRepresentation.HybridElkhound,
@@ -175,7 +170,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.DataDependent,
                     ParseForestConstruction.standard(),
                     StackRepresentation.Hybrid,
@@ -188,7 +182,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.LayoutSensitive,
                     ParseForestConstruction.Full,
                     StackRepresentation.Hybrid,
@@ -201,7 +194,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.Composite,
                     ParseForestConstruction.Full,
                     StackRepresentation.Hybrid,
@@ -214,7 +206,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.Incremental,
                     ParseForestConstruction.standard(),
                     StackRepresentation.Hybrid,
@@ -227,7 +218,6 @@ public class JSGLR2Variant {
             new JSGLR2Variant(
                 new ParserVariant(
                     ActiveStacksRepresentation.standard(),
-                    ForActorStacksRepresentation.standard(),
                     ParseForestRepresentation.Incremental,
                     ParseForestConstruction.standard(),
                     StackRepresentation.Hybrid,

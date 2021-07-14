@@ -3,24 +3,32 @@ package org.spoofax.jsglr2.stack.collections;
 import org.metaborg.parsetable.states.IState;
 import org.spoofax.jsglr2.stack.IStackNode;
 
+import java.util.Iterator;
+
 public interface IActiveStacks<StackNode extends IStackNode> extends Iterable<StackNode> {
-
-    void add(StackNode stack);
-
-    boolean isSingle();
-
-    StackNode getSingle();
 
     boolean isEmpty();
 
+    boolean isSingle();
+
     boolean isMultiple();
+
+    StackNode getSingle();
 
     StackNode findWithState(IState state);
 
-    Iterable<StackNode> forLimitedReductions(IForActorStacks<StackNode> forActorStacks);
+    void add(StackNode stack);
 
-    void addAllTo(IForActorStacks<StackNode> forActorStacks);
+    void addForActor(StackNode stack);
+
+    void addAllForActor();
 
     void clear();
+
+    Iterator<StackNode> forActor();
+
+    Iterable<StackNode> forLimitedReductions();
+
+    Iterable<StackNode> forActorStacks();
 
 }

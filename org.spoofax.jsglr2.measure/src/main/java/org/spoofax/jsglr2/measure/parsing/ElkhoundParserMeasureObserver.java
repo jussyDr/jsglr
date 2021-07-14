@@ -31,7 +31,7 @@ class ElkhoundParserMeasureObserver
         doReductions++;
 
         if(stack.deterministicDepth >= reduce.arity()) {
-            if(parseState.stacks.isSingle())
+            if(parseState.activeStacks.isSingle())
                 doReductionsLR++;
             else
                 doReductionsDeterministicGLR++;

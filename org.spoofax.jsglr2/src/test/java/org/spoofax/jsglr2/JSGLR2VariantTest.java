@@ -12,7 +12,6 @@ import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
 import org.spoofax.jsglr2.tokens.TokenizerVariant;
 
 public class JSGLR2VariantTest {
@@ -32,9 +31,8 @@ public class JSGLR2VariantTest {
     @Test public void testVariantMessage() {
         JSGLR2Variant variant =
             new JSGLR2Variant(
-                new ParserVariant(ActiveStacksRepresentation.standard(), ForActorStacksRepresentation.standard(),
-                    ParseForestRepresentation.Incremental, ParseForestConstruction.standard(),
-                    StackRepresentation.Hybrid, Reducing.Elkhound, false),
+                new ParserVariant(ActiveStacksRepresentation.standard(), ParseForestRepresentation.Incremental,
+                    ParseForestConstruction.standard(), StackRepresentation.Hybrid, Reducing.Elkhound, false),
                 ImploderVariant.RecursiveIncremental, TokenizerVariant.Recursive);
         try {
             variant.getJSGLR2(null);

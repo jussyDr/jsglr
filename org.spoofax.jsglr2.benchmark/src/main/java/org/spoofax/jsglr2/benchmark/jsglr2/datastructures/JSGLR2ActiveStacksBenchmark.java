@@ -21,7 +21,6 @@ import org.spoofax.jsglr2.stack.StackLink;
 import org.spoofax.jsglr2.stack.basic.BasicStackNode;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksArrayList;
 import org.spoofax.jsglr2.stack.collections.IActiveStacks;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
 
 public abstract class JSGLR2ActiveStacksBenchmark extends JSGLR2DataStructureBenchmark {
 
@@ -50,30 +49,6 @@ public abstract class JSGLR2ActiveStacksBenchmark extends JSGLR2DataStructureBen
         }
     }
 
-    private IForActorStacks<BasicStackNode<IBasicParseForest>> emptyForActorStacks =
-        new IForActorStacks<BasicStackNode<IBasicParseForest>>() {
-
-            @Override public void add(BasicStackNode<IBasicParseForest> stack) {
-            }
-
-            @Override public boolean contains(BasicStackNode<IBasicParseForest> stack) {
-                return false;
-            }
-
-            @Override public boolean nonEmpty() {
-                return false;
-            }
-
-            @Override public BasicStackNode<IBasicParseForest> remove() {
-                return null;
-            }
-
-            @Override public Iterator<BasicStackNode<IBasicParseForest>> iterator() {
-                return null;
-            }
-
-        };
-
     private interface ActiveStacksOperation {
         void execute(Blackhole bh);
     }
@@ -85,7 +60,7 @@ public abstract class JSGLR2ActiveStacksBenchmark extends JSGLR2DataStructureBen
 
         @Override public void parseRound(AbstractParseState<IInputStack, BasicStackNode<IBasicParseForest>> parseState,
             Iterable<BasicStackNode<IBasicParseForest>> activeStackNodes) {
-            operations.add(bh -> activeStacks.addAllTo(emptyForActorStacks));
+            operations.add(bh -> activeStacks.addAllForActor());
         }
 
         @Override public void addActiveStack(BasicStackNode<IBasicParseForest> stack) {
@@ -99,7 +74,7 @@ public abstract class JSGLR2ActiveStacksBenchmark extends JSGLR2DataStructureBen
                 // Only if no existing direct link is found during a reduction, a new link is created and some active
                 // stacks (those that are not reject and not in for actor) need to be revisited
                 operations.add(bh -> {
-                    for(Object activeStack : activeStacks.forLimitedReductions(emptyForActorStacks))
+                    for(Object activeStack : activeStacks.forLimitedReductions())
                         bh.consume(activeStack);
                 });
             }
@@ -114,8 +89,12 @@ public abstract class JSGLR2ActiveStacksBenchmark extends JSGLR2DataStructureBen
             operations.add(bh -> activeStacks.clear());
         }
 
+        @Override public void addForActorStack(BasicStackNode<IBasicParseForest> stack) {
+            operations.add(bh -> activeStacks.addForActor(stack));
+        }
+
         /*
-         * IActiveStacks::isEmpty and IActiveStacks::isSingle calls are not included in the benchmark
+         * Benchmark is not complete.
          */
 
     }

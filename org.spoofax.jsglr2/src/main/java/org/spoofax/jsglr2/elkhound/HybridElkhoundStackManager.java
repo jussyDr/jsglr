@@ -44,7 +44,7 @@ public class HybridElkhoundStackManager
     @Override protected StackLink<ParseForest, HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>>
         addStackLink(ParseState parseState, HybridElkhoundStackNode<ParseForest, Derivation, ParseNode> from,
             HybridElkhoundStackNode<ParseForest, Derivation, ParseNode> to, ParseForest parseNode) {
-        return from.addLink(observing, to, parseNode, parseState.stacks);
+        return from.addLink(observing, to, parseNode, parseState.activeStacks);
     }
 
     @Override protected StackLink<ParseForest, HybridElkhoundStackNode<ParseForest, Derivation, ParseNode>>

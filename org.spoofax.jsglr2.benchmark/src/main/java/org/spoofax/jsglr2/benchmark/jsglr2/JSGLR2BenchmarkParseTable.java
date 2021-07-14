@@ -13,7 +13,6 @@ import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
 import org.spoofax.jsglr2.testset.testinput.StringInput;
 
 public abstract class JSGLR2BenchmarkParseTable extends JSGLR2Benchmark<String, StringInput> {
@@ -26,8 +25,6 @@ public abstract class JSGLR2BenchmarkParseTable extends JSGLR2Benchmark<String, 
 
     @Param({ "ArrayList" }) public ActiveStacksRepresentation activeStacksRepresentation;
 
-    @Param({ "ArrayDeque" }) public ForActorStacksRepresentation forActorStacksRepresentation;
-
     @Param({ "Basic" }) public ParseForestRepresentation parseForestRepresentation;
 
     @Param({ "Full" }) public ParseForestConstruction parseForestConstruction;
@@ -39,8 +36,8 @@ public abstract class JSGLR2BenchmarkParseTable extends JSGLR2Benchmark<String, 
     @Override protected IntegrationVariant variant() {
         IntegrationVariant variant = new IntegrationVariant(
             new ParseTableVariant(actionsForCharacterRepresentation, productionToGotoRepresentation),
-            new ParserVariant(activeStacksRepresentation, forActorStacksRepresentation, parseForestRepresentation,
-                parseForestConstruction, stackRepresentation, reducing, false),
+            new ParserVariant(activeStacksRepresentation, parseForestRepresentation, parseForestConstruction,
+                stackRepresentation, reducing, false),
             imploderVariant, tokenizerVariant);
         System.out.println("JSGLR2 PT Var: " + variant.name());
         if(variant.equals(new IntegrationVariant(new ParseTableVariant(ActionsForCharacterRepresentation.DisjointSorted,

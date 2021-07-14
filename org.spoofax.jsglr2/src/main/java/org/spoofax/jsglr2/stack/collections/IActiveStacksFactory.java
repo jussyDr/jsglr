@@ -16,6 +16,6 @@ public interface IActiveStacksFactory {
     StackNode   extends IStackNode,
     ParseState  extends AbstractParseState<?, StackNode>>
 //@formatter:on
-    IActiveStacks<StackNode> get(ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing);
+   IActiveStacks<StackNode> get(ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing);
 
 }

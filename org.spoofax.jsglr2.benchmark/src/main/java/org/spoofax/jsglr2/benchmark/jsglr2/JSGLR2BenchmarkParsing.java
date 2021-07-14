@@ -13,7 +13,6 @@ import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
 import org.spoofax.jsglr2.testset.testinput.StringInput;
 
 public abstract class JSGLR2BenchmarkParsing extends JSGLR2Benchmark<String, StringInput> {
@@ -24,10 +23,7 @@ public abstract class JSGLR2BenchmarkParsing extends JSGLR2Benchmark<String, Str
 
     @Param({ "JavaHashMap" }) ProductionToGotoRepresentation productionToGotoRepresentation;
 
-    @Param({ "ArrayList", "ArrayListHashMap",
-        "LinkedHashMap" }) public ActiveStacksRepresentation activeStacksRepresentation;
-
-    @Param({ "ArrayDeque", "LinkedHashMap" }) public ForActorStacksRepresentation forActorStacksRepresentation;
+    @Param({ "ArrayList" }) public ActiveStacksRepresentation activeStacksRepresentation;
 
     @Param({ "Basic", "Hybrid" }) public ParseForestRepresentation parseForestRepresentation;
 
@@ -40,8 +36,8 @@ public abstract class JSGLR2BenchmarkParsing extends JSGLR2Benchmark<String, Str
     @Override protected IntegrationVariant variant() {
         return new IntegrationVariant(
             new ParseTableVariant(actionsForCharacterRepresentation, productionToGotoRepresentation),
-            new ParserVariant(activeStacksRepresentation, forActorStacksRepresentation, parseForestRepresentation,
-                parseForestConstruction, stackRepresentation, reducing, false),
+            new ParserVariant(activeStacksRepresentation, parseForestRepresentation, parseForestConstruction,
+                stackRepresentation, reducing, false),
             imploderVariant, tokenizerVariant);
     }
 

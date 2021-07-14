@@ -14,7 +14,6 @@ import org.spoofax.jsglr2.parser.ParserVariant;
 import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
 import org.spoofax.jsglr2.tokens.TokenizerVariant;
 
 import picocli.CommandLine.ArgGroup;
@@ -45,10 +44,6 @@ public class ParserBuilder {
             description = "Active stacks implementation: ${COMPLETION-CANDIDATES}") private ActiveStacksRepresentation activeStacksRepresentation =
                 ActiveStacksRepresentation.standard();
 
-        @Option(names = { "--forActorStacks" },
-            description = "For actor stacks implementation: ${COMPLETION-CANDIDATES}") private ForActorStacksRepresentation forActorStacksRepresentation =
-                ForActorStacksRepresentation.standard();
-
         @Option(names = { "--parseForest" },
             description = "Parse forest representation: ${COMPLETION-CANDIDATES}") private ParseForestRepresentation parseForestRepresentation =
                 ParseForestRepresentation.standard();
@@ -77,8 +72,8 @@ public class ParserBuilder {
                 TokenizerVariant.standard();
 
         JSGLR2Variant getVariant() throws WrappedException {
-            ParserVariant parserVariant = new ParserVariant(activeStacksRepresentation, forActorStacksRepresentation,
-                parseForestRepresentation, parseForestConstruction, stackRepresentation, reducing, recovery);
+            ParserVariant parserVariant = new ParserVariant(activeStacksRepresentation, parseForestRepresentation,
+                parseForestConstruction, stackRepresentation, reducing, recovery);
 
             JSGLR2Variant variant = new JSGLR2Variant(parserVariant, imploderVariant, tokenizerVariant);
 

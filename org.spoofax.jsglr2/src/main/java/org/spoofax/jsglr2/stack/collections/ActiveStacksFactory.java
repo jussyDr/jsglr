@@ -11,12 +11,6 @@ public class ActiveStacksFactory implements IActiveStacksFactory {
 
     private final ActiveStacksRepresentation activeStacksRepresentation;
 
-    public static ActiveStacksRepresentation defaultActiveStacksRepresentation = ActiveStacksRepresentation.ArrayList;
-
-    public ActiveStacksFactory() {
-        this(defaultActiveStacksRepresentation);
-    }
-
     public ActiveStacksFactory(ActiveStacksRepresentation activeStacksRepresentation) {
         this.activeStacksRepresentation = activeStacksRepresentation;
     }
@@ -29,25 +23,11 @@ public class ActiveStacksFactory implements IActiveStacksFactory {
     StackNode   extends IStackNode,
     ParseState  extends AbstractParseState<?, StackNode>>
 //@formatter:on
-    IActiveStacks<StackNode> get(ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing) {
-        IActiveStacks<StackNode> activeStacks;
+   IActiveStacks<StackNode> get(ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing) {
+        if(activeStacksRepresentation == ActiveStacksRepresentation.ArrayList)
+            return new ActiveStacksArrayList<>(observing);
 
-        switch(activeStacksRepresentation) {
-            case ArrayList:
-                activeStacks = new ActiveStacksArrayList<>(observing);
-                break;
-            case ArrayListHashMap:
-                activeStacks = new ActiveStacksArrayListHashMap<>(observing);
-                break;
-            case LinkedHashMap:
-                activeStacks = new ActiveStacksLinkedHashMap<>(observing);
-                break;
-            default:
-                activeStacks = null;
-                break;
-        }
-
-        return activeStacks;
+        return null;
     }
 
 }

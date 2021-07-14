@@ -8,7 +8,6 @@ import org.spoofax.jsglr2.parseforest.IParseForest;
 import org.spoofax.jsglr2.parseforest.IParseNode;
 import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.stack.StackLink;
-import org.spoofax.jsglr2.stack.collections.IActiveStacks;
 
 public class BasicElkhoundStackNode
 //@formatter:off

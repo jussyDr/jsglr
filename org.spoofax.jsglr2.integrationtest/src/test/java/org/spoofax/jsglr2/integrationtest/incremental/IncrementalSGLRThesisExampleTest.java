@@ -40,8 +40,6 @@ import org.spoofax.jsglr2.reducing.Reducing;
 import org.spoofax.jsglr2.stack.IStackNode;
 import org.spoofax.jsglr2.stack.StackRepresentation;
 import org.spoofax.jsglr2.stack.collections.ActiveStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.ForActorStacksRepresentation;
-import org.spoofax.jsglr2.stack.collections.IForActorStacks;
 import org.spoofax.terms.util.TermUtils;
 
 public class IncrementalSGLRThesisExampleTest extends BaseTestWithSdf3ParseTables {
@@ -301,9 +299,9 @@ public class IncrementalSGLRThesisExampleTest extends BaseTestWithSdf3ParseTable
     // #### UTIL ####
 
     static IParser<? extends IParseForest> getParser(BaseTest test) throws Exception {
-        return new ParserVariant(ActiveStacksRepresentation.standard(), ForActorStacksRepresentation.standard(),
-            ParseForestRepresentation.Incremental, ParseForestConstruction.Full, StackRepresentation.Hybrid,
-            Reducing.Incremental, false).getParser(test.getParseTable(new ParseTableVariant()).parseTable);
+        return new ParserVariant(ActiveStacksRepresentation.standard(), ParseForestRepresentation.Incremental,
+            ParseForestConstruction.Full, StackRepresentation.Hybrid, Reducing.Incremental, false)
+        .getParser(test.getParseTable(new ParseTableVariant()).parseTable);
     }
 
     private static Map<IParseForest, Integer> getIds(IParseForest parseForest) {

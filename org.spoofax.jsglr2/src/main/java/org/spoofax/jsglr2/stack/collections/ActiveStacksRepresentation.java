@@ -1,7 +1,7 @@
 package org.spoofax.jsglr2.stack.collections;
 
 public enum ActiveStacksRepresentation {
-    ArrayList, ArrayListHashMap, LinkedHashMap;
+    ArrayList;
 
     public static ActiveStacksRepresentation standard() {
         return ArrayList;

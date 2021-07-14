@@ -1,10 +1,5 @@
 package org.spoofax.jsglr2.stack.collections;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.NoSuchElementException;
-
 import org.metaborg.parsetable.states.IState;
 import org.spoofax.jsglr2.parseforest.IDerivation;
 import org.spoofax.jsglr2.parseforest.IParseForest;
@@ -12,6 +7,8 @@ import org.spoofax.jsglr2.parseforest.IParseNode;
 import org.spoofax.jsglr2.parser.AbstractParseState;
 import org.spoofax.jsglr2.parser.observing.ParserObserving;
 import org.spoofax.jsglr2.stack.IStackNode;
+
+import java.util.*;
 
 public class ActiveStacksArrayList
 //@formatter:off
@@ -23,34 +20,33 @@ public class ActiveStacksArrayList
 //@formatter:on
     implements IActiveStacks<StackNode> {
 
-    protected ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing;
-    protected List<StackNode> activeStacks;
+    private final ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing;
+    protected final List<StackNode> activeStacks;
+    protected int forActorSize;
+    protected int forActorDelayedSize;
 
     public ActiveStacksArrayList(ParserObserving<ParseForest, Derivation, ParseNode, StackNode, ParseState> observing) {
         this.observing = observing;
-        this.activeStacks = new ArrayList<>();
-    }
 
-    @Override public void add(StackNode stack) {
-        observing.notify(observer -> observer.addActiveStack(stack));
-
-        activeStacks.add(stack);
-    }
-
-    @Override public boolean isSingle() {
-        return activeStacks.size() == 1;
-    }
-
-    @Override public StackNode getSingle() {
-        return activeStacks.get(0);
+        activeStacks = new ArrayList<>();
+        forActorSize = 0;
+        forActorDelayedSize = 0;
     }
 
     @Override public boolean isEmpty() {
         return activeStacks.isEmpty();
     }
 
+    @Override public boolean isSingle() {
+        return activeStacks.size() == 1;
+    }
+
     @Override public boolean isMultiple() {
         return activeStacks.size() > 1;
+    }
+
+    @Override public StackNode getSingle() {
+        return activeStacks.get(0);
     }
 
     @Override public StackNode findWithState(IState state) {
@@ -63,42 +59,61 @@ public class ActiveStacksArrayList
         return null;
     }
 
-    @Override public Iterable<StackNode> forLimitedReductions(IForActorStacks<StackNode> forActorStacks) {
-        return () -> new Iterator<StackNode>() {
+    @Override public void add(StackNode stack) {
+        observing.notify(observer -> observer.addActiveStack(stack));
 
-            int index = 0;
+        activeStacks.add(stack);
+    }
 
-            // Save the number of active stacks to prevent the for loop from processing active stacks that are added
-            // by doLimitedReductions. We can safely limit the loop by the current number of stacks since new stack are
-            // added at the end.
-            final int currentSize = activeStacks.size();
+    @Override public void addForActor(StackNode stack) {
+        observing.notify(observer -> observer.addForActorStack(stack));
+
+        activeStacks.add(stack);
+
+        Collections.swap(activeStacks, forActorSize, activeStacks.size() - 1);
+
+        if(stack.state().isRejectable()) {
+            Collections.swap(activeStacks, forActorDelayedSize, forActorSize);
+
+            forActorDelayedSize++;
+        }
+
+        forActorSize++;
+    }
+
+    @Override public void addAllForActor() {
+        forActorSize = activeStacks.size();
+    }
+
+    @Override public void clear() {
+        activeStacks.clear();
+        forActorSize = 0;
+        forActorDelayedSize = 0;
+    }
+
+    @Override public Iterator<StackNode> forActor() {
+        return new Iterator<StackNode>() {
 
             @Override public boolean hasNext() {
-                // skip non-applicable actions
-                while(index < currentSize && !(!activeStacks.get(index).allLinksRejected()
-                    && !forActorStacks.contains(activeStacks.get(index)))) {
-                    index++;
-                }
-                return index < currentSize;
+                return forActorSize > 0;
             }
 
             @Override public StackNode next() {
-                if(!hasNext()) {
-                    throw new NoSuchElementException();
-                }
-                return activeStacks.get(index++);
+                if(forActorSize == forActorDelayedSize)
+                    forActorDelayedSize--;
+
+                return activeStacks.get(--forActorSize);
             }
 
         };
     }
 
-    @Override public void addAllTo(IForActorStacks<StackNode> other) {
-        for(StackNode stack : activeStacks)
-            other.add(stack);
+    @Override public Iterable<StackNode> forLimitedReductions() {
+        return new ArrayDeque<>(activeStacks.subList(forActorSize, activeStacks.size()));
     }
 
-    @Override public void clear() {
-        activeStacks.clear();
+    @Override public Iterable<StackNode> forActorStacks() {
+        return activeStacks.subList(0, forActorSize);
     }
 
     @Override public Iterator<StackNode> iterator() {
