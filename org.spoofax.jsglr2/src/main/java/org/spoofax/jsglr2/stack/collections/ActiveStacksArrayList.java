@@ -10,6 +10,10 @@ import org.spoofax.jsglr2.stack.IStackNode;
 
 import java.util.*;
 
+/*
+ IActiveStacks implementation as a single List consisting of three segments in order:
+ for-actor-delayed, for-actor, for-limited-reductions.
+ */
 public class ActiveStacksArrayList
 //@formatter:off
    <ParseForest extends IParseForest,
@@ -65,6 +69,10 @@ public class ActiveStacksArrayList
         activeStacks.add(stack);
     }
 
+    /*
+     We can prevent array-copies by moving the first element of the for-actor and for-limited-reductions segments
+     to the end and inserting the new element in its place.
+     */
     @Override public void addForActor(StackNode stack) {
         observing.notify(observer -> observer.addForActorStack(stack));
 
