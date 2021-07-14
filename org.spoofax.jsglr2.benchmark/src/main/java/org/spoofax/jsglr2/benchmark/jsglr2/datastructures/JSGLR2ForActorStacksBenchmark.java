@@ -65,7 +65,7 @@ public abstract class JSGLR2ForActorStacksBenchmark extends JSGLR2DataStructureB
         }
 
         @Override public void handleForActorStack(BasicStackNode<IBasicParseForest> stack,
-            IForActorStacks<BasicStackNode<IBasicParseForest>> forActorStacks_) {
+            Iterable<BasicStackNode<IBasicParseForest>> forActorStacks_) {
             operations.add(bh -> {
                 bh.consume(forActorStacks.nonEmpty()); // The condition in the while loop in Parser::parseCharacter
                 bh.consume(forActorStacks.remove());
@@ -96,7 +96,7 @@ public abstract class JSGLR2ForActorStacksBenchmark extends JSGLR2DataStructureB
             activeStacksCopy(AbstractParseState<IInputStack, BasicStackNode<IBasicParseForest>> parseState) {
             List<BasicStackNode<IBasicParseForest>> activeStacksCopy = new ArrayList<>();
 
-            for(BasicStackNode<IBasicParseForest> activeStack : parseState.activeStacks)
+            for(BasicStackNode<IBasicParseForest> activeStack : parseState.stacks)
                 activeStacksCopy.add(activeStack);
 
             return activeStacksCopy;
