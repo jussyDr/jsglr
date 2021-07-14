@@ -3,6 +3,7 @@ package org.spoofax.jsglr2.reducing;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.common.collect.Iterables;
 import org.metaborg.parsetable.IParseTable;
 import org.metaborg.parsetable.actions.IReduce;
 import org.metaborg.parsetable.states.IState;
@@ -141,11 +142,20 @@ public class ReduceManager
                 StackLink<ParseForest, StackNode> link = reducer.reducerExistingStackWithoutDirectLink(observing,
                     parseState, reduce, gotoStack, originStack, parseForests);
 
-                for(StackNode activeStackForLimitedReductions : parseState.activeStacks
-                    .forLimitedReductions(parseState.forActorStacks)) {
-                    for(IReduce reduceAction : activeStackForLimitedReductions.state()
+                if(parseState.activeStacksWithParents.contains(gotoStack)) {
+                    // The goto stack has parents, so we need to check all active stacks for new reduction paths.
+                    for(StackNode activeStackForLimitedReductions : parseState.activeStacks
+                        .forLimitedReductions(parseState.forActorStacks)) {
+                        for(IReduce reduceAction : activeStackForLimitedReductions.state()
+                            .getApplicableReduceActions(parseState.inputStack, parseState.mode))
+                            doLimitedReductions(observing, parseState, activeStackForLimitedReductions, reduceAction,
+                                link);
+                    }
+                } else if (Iterables.contains(parseState.activeStacks.forLimitedReductions(parseState.forActorStacks),
+                    gotoStack)) {
+                    for(IReduce reduceAction : gotoStack.state()
                         .getApplicableReduceActions(parseState.inputStack, parseState.mode))
-                        doLimitedReductions(observing, parseState, activeStackForLimitedReductions, reduceAction, link);
+                        doLimitedReductions(observing, parseState, gotoStack, reduceAction, link);
                 }
             }
         } else {
@@ -154,6 +164,7 @@ public class ReduceManager
 
             parseState.activeStacks.add(gotoStack);
             parseState.forActorStacks.add(gotoStack);
+            parseState.activeStacksWithParents.add(originStack);
         }
 
         StackNode finalGotoStack = gotoStack;

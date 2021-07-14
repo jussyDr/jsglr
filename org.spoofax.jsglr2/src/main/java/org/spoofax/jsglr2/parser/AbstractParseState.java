@@ -24,6 +24,7 @@ public abstract class AbstractParseState<InputStack extends IInputStack, StackNo
 
     public final IActiveStacks<StackNode> activeStacks;
     public final IForActorStacks<StackNode> forActorStacks;
+    public final Collection<StackNode> activeStacksWithParents;
     public final Queue<ForShifterElement<StackNode>> forShifter = new ArrayDeque<>();
 
     public StackNode acceptingStack;
@@ -36,6 +37,7 @@ public abstract class AbstractParseState<InputStack extends IInputStack, StackNo
 
         this.activeStacks = activeStacks;
         this.forActorStacks = forActorStacks;
+        this.activeStacksWithParents = new ArrayDeque<>();
     }
 
     public void nextParseRound(ParserObserving observing) throws ParseException {

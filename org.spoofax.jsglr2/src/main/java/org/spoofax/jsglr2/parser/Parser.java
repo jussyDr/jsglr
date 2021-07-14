@@ -169,6 +169,7 @@ public class Parser
         parseState.nextParseRound(observing);
 
         parseState.activeStacks.addAllTo(parseState.forActorStacks);
+        parseState.activeStacksWithParents.clear();
 
         observing.notify(observer -> observer.forActorStacks(parseState.forActorStacks));
 
