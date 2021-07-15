@@ -164,8 +164,10 @@ public class ReduceManager
 
             parseState.activeStacks.add(gotoStack);
             parseState.forActorStacks.add(gotoStack);
-            parseState.activeStacksWithParents.add(originStack);
         }
+
+        if(reduce.arity() == 0)
+            parseState.activeStacksWithParents.add(activeStack);
 
         StackNode finalGotoStack = gotoStack;
         observing.notify(
